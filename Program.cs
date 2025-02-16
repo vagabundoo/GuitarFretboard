@@ -2,10 +2,10 @@
 using GuitarFretboard;
 using System;
 
-//Console.Clear();
+Console.Clear();
 
 var emptyFretboard = new Fretboard("input/guitarFretboardEmpty.txt");
-//emptyFretboard.PrintFretboard();
+emptyFretboard.PrintFretboard();
 
 
 // Functionality for printing a marked fretboard
@@ -22,11 +22,27 @@ fretboard.PrintFretboard();
 
 void printFretboardNoteMarked(Fretboard fretboard, int stringNumber, int fretNumber)
 {
-    //fretboard = new Fretboard("input/guitarFretboardMarked.txt");
-    //string stringNumberStr = stringNumber.ToString();
     string fretNumberStr = fretNumber.ToString();
     Fretboard fretboardCopy = fretboard;
-    fretboardCopy.Rows[stringNumber] = fretboardCopy.Rows[stringNumber].Replace(fretNumberStr, "[yellow]X[/]");
+    switch(fretNumber)
+    {
+        case 0:
+            fretboardCopy.Rows[stringNumber] = fretboardCopy.Rows[stringNumber].Replace("||", "[yellow]X|[/]");
+            break;
+        case 1:
+        case 2:
+            fretboardCopy.Rows[stringNumber] = fretboardCopy.Rows[stringNumber].Replace($"-{fretNumber}-", "-[yellow]X[/]-");
+            break;
+        case 10:
+        case 11:
+        case 12:
+            fretboardCopy.Rows[stringNumber] = fretboardCopy.Rows[stringNumber].Replace(fretNumberStr, "[yellow]XX[/]");
+            break;
+        default:
+            fretboardCopy.Rows[stringNumber] = fretboardCopy.Rows[stringNumber].Replace(fretNumberStr, "[yellow]X[/]");
+            break;
+    }
+    
     fretboardCopy.PrintFretboard();
 }
 
@@ -62,6 +78,14 @@ Dictionary<string, string[]> standardStrings = new Dictionary<string, string[]>
 //var rand = new Random();
 //var randString = ;
 //System.Console.WriteLine(randString);
+var answermode = false;
+System.Console.WriteLine("Would you like to play with hints? (y/n)");
+string? inputAnswerMode = Convert.ToString(Console.ReadLine());
+if (inputAnswerMode == "y") 
+{
+    answermode = true;
+}
+
 
 string? givenAnswer = "";
 do
@@ -75,10 +99,11 @@ do
 
     var requiredNote = randomNotes[randomFret];
 
-    printFretboardNoteMarked(fretboard, stringNumber, randomFret);
     AnsiConsole.MarkupLine("[blue]Give the note name [/]");
-    System.Console.WriteLine($"Hint: {requiredNote}");
-    AnsiConsole.MarkupLine($"String {randomGuitarString}, fret {randomFret}:");
+    if (answermode)
+        System.Console.WriteLine($"Hint: {requiredNote}");
+    AnsiConsole.MarkupLine($"[green]String {randomGuitarString}, fret {randomFret}:[/]");
+    printFretboardNoteMarked(fretboard, stringNumber, randomFret);
 
     givenAnswer = Convert.ToString(Console.ReadLine());
 
